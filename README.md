@@ -1,3 +1,7 @@
+# Group
+Sarathy Selvam, PID: 730770538
+Lakshin Ganesha, PID: 
+
 # Erlang Chain Server
 
 A simple example showing how to start the server and interact with it.
