@@ -1,40 +1,4 @@
-# Erlang Chain Server
-
-A simple example showing how to start the server and interact with it.
-
-## Start the Server
-
-Open the Erlang shell and run:
-
-```bash
-erl
-```
-
-Then in the Erlang shell:
-
-```erlang
-c(chain_server).
-chain_server:start().
-
->>> {add, 10, 5}.
-(serv1) add 10 5 = 15
-
->>> [1, 2, 3].
-(serv2) sum of [1,2,3] = 6
-
->>> {error, "test error"}.
-(serv3) Error: "test error"
-
->>> hello.
-(serv3) Not handled: hello
-
->>> halt.
-(serv1) halting
-(serv2) halting
-(serv3) Unhandled message count: 1
-(serv3) halting
-ok
-```
+# Test Cases for Chain Server
 
 ## Arithmetic Operations (serv1)
 
@@ -112,3 +76,21 @@ Expected: (serv3) Not handled: hello
 
 ### Testing Cascade
 Input: halt.
+Expected:
+(serv1) halting
+(serv2) halting
+(serv3) Unhandled message count: 3
+(serv3) halting
+
+## Complete Session Example
+
+1. {add, 10, 5}.           → (serv1) add 10 5 = 15
+2. [1, 2, 3].              → (serv2) sum of [1,2,3] = 6
+3. [2.0, 3.0].             → (serv2) product of [2.0,3.0] = 6.0
+4. {error, "test"}.        → (serv3) Error: "test"
+5. {unknown, data}.        → (serv3) Not handled: {unknown,data}
+6. hello.                  → (serv3) Not handled: hello
+7. halt.                   → (serv1) halting
+                               (serv2) halting
+                               (serv3) Unhandled message count: 2
+                               (serv3) halting
