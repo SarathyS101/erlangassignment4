@@ -28,61 +28,61 @@ chain_server:start().
 
 ## Arithmetic Operations on serv1
 
-{add, 5, 3}.
-(serv1) Add: 5 + 3 = 8
+- Input: {add, 5, 3}.
+- Output: (serv1) Add: 5 + 3 = 8
 
-sub, 20, 8}. 
-(serv1) Subtract: 20 - 8 = 12
+- Input: sub, 20, 8}. 
+- Output: (serv1) Subtract: 20 - 8 = 12
 
-{mult, 3, 4}.
-(serv1) Multiply: 3 * 4 = 12
+- Input: {mult, 3, 4}.
+- Output: (serv1) Multiply: 3 * 4 = 12
 
-{'div', 20, 4}.
-(serv1) Divide: 20 / 4 = 5.0
+- Input: {'div', 20, 4}.
+- Output: (serv1) Divide: 20 / 4 = 5.0
 
-{'div', 10, 0}.
-(serv1) Error: Division by zero
+- Input: {'div', 10, 0}.
+- Output: (serv1) Error: Division by zero
 
-{neg, 5}.
-(serv1) Negate: 5 = -5
+- Input: {neg, 5}.
+- Output: (serv1) Negate: 5 = -5
  
-{sqrt, 16}.
-(serv1) Sqrt of 16 = 4.0
+- Input:{sqrt, 16}.
+- Output: (serv1) Sqrt of 16 = 4.0
 
-{sqrt, -4}.
-(serv1) Error: Cannot calculate sqrt of negative number
+- Input: {sqrt, -4}.
+- Output: (serv1) Error: Cannot calculate sqrt of negative number
 
 ## List Operations on serv2
 
-[1, 2, 3, 4].
-(serv2) Integer list sum = 10
+- Input: [1, 2, 3, 4].
+- Output: (serv2) Integer list sum = 10
 
-[2.0, 3.0, 4.0].
-(serv2) Float list product = 24.0
+- Input: [2.0, 3.0, 4.0].
+- Output: (serv2) Float list product = 24.0
 
-[5, 10, 15].
-(serv2) Integer list sum = 30
+- Input: [5, 10, 15].
+- Output: (serv2) Integer list sum = 30
 
 ## Unhandled Messages on serv3
  
-{error, "test error"}.
-(serv3) Error caught: "test error"
+- Input: {error, "test error"}.
+- Output: (serv3) Error caught: "test error"
 
-{error, "connection failed"}.
-(serv3) Error caught: "connection failed"
+- Input: {error, "connection failed"}.
+- Output: (serv3) Error caught: "connection failed"
 
-{unknown, msg}.
-(serv3) Not handled: {unknown,msg}
+- Input: {unknown, msg}.
+- Output: (serv3) Not handled: {unknown,msg}
 
-random_atom.
-(serv3) Not handled: random_atom
+- Input: random_atom.
+- Output: (serv3) Not handled: random_atom
 
-hello.
-(serv3) Not handled: hello
+- Input: hello.
+- Output: (serv3) Not handled: hello
 
 ## Halt Sequence
 
-halt.
-(serv1) Halting.
+- Input: halt.
+- Output: (serv1) Halting.
 (serv2) Halting.
 (serv3) Halting. Total unhandled messages: 3
