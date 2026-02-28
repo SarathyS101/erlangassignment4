@@ -31,57 +31,58 @@ chain_server:start().
 {add, 5, 3}.
 (serv1) Add: 5 + 3 = 8
 
->>> sub, 20, 8}. 
+sub, 20, 8}. 
 (serv1) Subtract: 20 - 8 = 12
 
->>> {mult, 3, 4}.
+{mult, 3, 4}.
 (serv1) Multiply: 3 * 4 = 12
 
->>> {'div', 20, 4}.
+{'div', 20, 4}.
 (serv1) Divide: 20 / 4 = 5.0
 
->>> {'div', 10, 0}.
+{'div', 10, 0}.
 (serv1) Error: Division by zero
 
->>> {neg, 5}.
+{neg, 5}.
 (serv1) Negate: 5 = -5
  
->>> {sqrt, 16}.
+{sqrt, 16}.
 (serv1) Sqrt of 16 = 4.0
 
->>> {sqrt, -4}.
+{sqrt, -4}.
 (serv1) Error: Cannot calculate sqrt of negative number
 
 ## List Operations on serv2
 
->>> [1, 2, 3, 4].
+[1, 2, 3, 4].
 (serv2) Integer list sum = 10
 
->>> [2.0, 3.0, 4.0].
+[2.0, 3.0, 4.0].
 (serv2) Float list product = 24.0
 
->>> [5, 10, 15].
+[5, 10, 15].
 (serv2) Integer list sum = 30
 
- ## Unhandled Messages on serv3
+## Unhandled Messages on serv3
  
->>> {error, "test error"}.
+{error, "test error"}.
 (serv3) Error caught: "test error"
 
->>> {error, "connection failed"}.
+{error, "connection failed"}.
 (serv3) Error caught: "connection failed"
 
->>> {unknown, msg}.
+{unknown, msg}.
 (serv3) Not handled: {unknown,msg}
->>> random_atom.
+
+random_atom.
 (serv3) Not handled: random_atom
 
->>> hello.
+hello.
 (serv3) Not handled: hello
 
 ## Halt Sequence
 
->>> halt.
+halt.
 (serv1) Halting.
 (serv2) Halting.
 (serv3) Halting. Total unhandled messages: 3
