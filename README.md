@@ -2,8 +2,6 @@
 - Sarathy Selvam, PID: 730770538
 - Lakshin Ganesha, PID: 730757493
 
-Then in the Erlang shell:
-
 ```erlang
 c(chain_server).
 chain_server:start().
