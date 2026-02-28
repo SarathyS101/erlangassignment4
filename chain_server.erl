@@ -2,12 +2,12 @@
 -export([start/0, parse_input/1]).
 
 start() ->
-    % Spawn servers in reverse order
+    % Starts the servers in reverse order
     Serv3Pid = spawn(fun() -> serv3_loop(none, 0) end),
     Serv2Pid = spawn(fun() -> serv2_loop(Serv3Pid) end),
     Serv1Pid = spawn(fun() -> serv1_loop(Serv2Pid) end),
 
-    % Start the input reading loop
+    % input reading loop
     read_loop(Serv1Pid).
 
 % Read user input and send to serv1
@@ -30,7 +30,7 @@ read_loop(Serv1Pid) ->
             end
     end.
 
-% Parse user input into Erlang terms
+% Convert user input into Erlang 
 parse_input(Input) ->
     CleanInput = string:trim(Input),
     InputWithDot = case CleanInput of
@@ -62,7 +62,7 @@ quote_reserved_keywords(Input) ->
     ReservedWords = ['div', 'rem', 'mod', 'band', 'bor', 'bxor', 'bsl', 'bsr', 'and', 'or', 'not'],
     quote_keywords_list(Input, ReservedWords).
 
-% Recursively quote keywords
+% Recursively quotes keywords
 quote_keywords_list(Input, []) ->
     Input;
 quote_keywords_list(Input, [Keyword|Rest]) ->
@@ -71,36 +71,33 @@ quote_keywords_list(Input, [Keyword|Rest]) ->
     QuotedInput = replace_keyword_simple(Input, KeywordStr, QuotedStr),
     quote_keywords_list(QuotedInput, Rest).
 
-% Replace keyword when surrounded by non-alphanumeric characters
+% Replaces keyword when surrounded by non alphanumeric characters
 replace_keyword_simple(Input, Keyword, Quoted) ->
     case string:find(Input, Keyword) of
         nomatch ->
             Input;
         _ ->
-            % Use a simple replacement strategy
             do_replace_keyword(Input, Keyword, Quoted, [])
     end.
 
-% Character-by-character replacement
+% Character by character replacement
 do_replace_keyword([], _, _, Acc) ->
     lists:reverse(Acc);
 do_replace_keyword(Input, Keyword, Quoted, Acc) ->
     KeyLen = length(Keyword),
     case Input of
         [Char|Rest] when Char == ${; Char == $[; Char == $( ->
-            % Check if keyword follows
             case Rest of
                 L when length(L) >= KeyLen ->
                     case lists:prefix(Keyword, L) of
                         true ->
-                            % Check if keyword is followed by non-alphanumeric
+                            % Check if keyword is followed by non alphanumeric
                             RestAfter = lists:nthtail(KeyLen, L),
                             case RestAfter of
                                 [C|_] when (C >= $a andalso C =< $z) orelse
                                           (C >= $A andalso C =< $Z) orelse
                                           (C >= $0 andalso C =< $9) orelse
                                           C == $_ ->
-                                    % Part of a larger identifier, don't replace
                                     do_replace_keyword(Rest, Keyword, Quoted, [Char|Acc]);
                                 _ ->
                                     % Replace the keyword
