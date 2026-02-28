@@ -60,8 +60,8 @@ chain_server:start().
 - Input: [2.0, 3.0, 4.0].
 - Output: (serv2) Product of Float list = 24.0
 
-- Input: [5, 10, 15].
-- Output: (serv2) Integer list sum = 30
+- Input: [5, 10.0, 15].
+- Output: (serv2) Sum of mixed = 30
 
 ## Error Messages on serv3
  
