@@ -11,7 +11,7 @@ chain_server:start().
 (serv1) add 10 + 5 = 15
 
 >>> [1, 2, 3].
-(serv2) Integer list sum = 6
+(serv2) Sum of int list = 6
 
 >>> {error, "test error"}.
 (serv3) Error caught: "test error"
@@ -55,10 +55,10 @@ chain_server:start().
 ## List Operations on serv2
 
 - Input: [1, 2, 3, 4].
-- Output: (serv2) Integer list sum = 10
+- Output: (serv2) Sum of int list = 10
 
 - Input: [2.0, 3.0, 4.0].
-- Output: (serv2) Float list product = 24.0
+- Output: (serv2) Product of Float list = 24.0
 
 - Input: [5, 10, 15].
 - Output: (serv2) Integer list sum = 30
