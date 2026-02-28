@@ -28,77 +28,60 @@ chain_server:start().
 
 ## Arithmetic Operations on serv1
 
-Addition
-Input: {add, 5, 3}.
-Expected: (serv1) add 5 3 = 8
+{add, 5, 3}.
+(serv1) Add: 5 + 3 = 8
 
-Subtraction
-Input: {sub, 20, 8}.
-Expected: (serv1) sub 20 8 = 12
+>>> {sub, 20, 8}. 
+(serv1) Subtract: 20 - 8 = 12
 
-Multiplication
-Input: {mult, 3, 4}.
-Expected: (serv1) mult 3 4 = 12
+>>> {mult, 3, 4}.
+(serv1) Multiply: 3 * 4 = 12
 
- Division
-Input: {'div', 20, 4}.
-Expected: (serv1) div 20 4 = 5.0
+>>> {'div', 20, 4}.
+(serv1) Divide: 20 / 4 = 5.0
 
-Division by Zero
-Input: {'div', 10, 0}.
-Expected: (serv1) div 10 0 = Error: Division by zero
+>>> {'div', 10, 0}.
+(serv1) Error: Division by zero
 
-Negation
-Input: {neg, 5}.
-Expected: (serv1) neg 5 = -5
+>>> {neg, 5}.
+(serv1) Negate: 5 = -5
+ 
+>>> {sqrt, 16}.
+(serv1) Sqrt of 16 = 4.0
 
-Square Root
-Input: {sqrt, 16}.
-Expected: (serv1) sqrt 16 = 4.0
-
-Negative Square Root
-Input: {sqrt, -4}.
-Expected: (serv1) sqrt -4 = Error: Negative square root
+>>> {sqrt, -4}.
+(serv1) Error: Cannot calculate sqrt of negative number
 
 ## List Operations on serv2
 
-Integer List Sum
-Input: [1, 2, 3, 4].
-Expected: (serv2) sum of [1,2,3,4] = 10
+>>> [1, 2, 3, 4].
+(serv2) Integer list sum = 10
 
-Float List Product
-Input: [2.0, 3.0, 4.0].
-Expected: (serv2) product of [2.0,3.0,4.0] = 24.0
+>>> [2.0, 3.0, 4.0].
+(serv2) Float list product = 24.0
 
-Mixed Integer List
-Input: [5, 10, 15].
-Expected: (serv2) sum of [5,10,15] = 30
+>>> [5, 10, 15].
+(serv2) Integer list sum = 30
 
-## Error Handling on serv3
+ ## Unhandled Messages on serv3
+ 
+>>> {error, "test error"}.
+(serv3) Error caught: "test error"
 
-Error Message
-Input: {error, "test error"}.
-Expected: (serv3) Error: "test error"
+>>> {error, "connection failed"}.
+(serv3) Error caught: "connection failed"
 
-Another Error
-Input: {error, "connection failed"}.
-Expected: (serv3) Error: "connection failed"
+>>> {unknown, msg}.
+(serv3) Not handled: {unknown,msg}
+>>> random_atom.
+(serv3) Not handled: random_atom
 
-## Unhandled Messages on serv3
-
-Unknown Tuple
-Input: {unknown, msg}.
-Expected: (serv3) Not handled: {unknown,msg}
-
-Random Atom
-Input: random_atom.
-Expected: (serv3) Not handled: random_atom
-
-Another Atom
-Input: hello.
-Expected: (serv3) Not handled: hello
+>>> hello.
+(serv3) Not handled: hello
 
 ## Halt Sequence
 
-Testing Cascade
-Input: halt.
+>>> halt.
+(serv1) Halting.
+(serv2) Halting.
+(serv3) Halting. Total unhandled messages: 3
