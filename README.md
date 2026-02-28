@@ -70,7 +70,7 @@ chain_server:start().
 
 - Input: {error, "connection failed"}.
 - Output: (serv3) Error caught: "connection failed"
-- 
+
 ### Unhandled Messages on serv3
 
 - Input: {unknown, msg}.
