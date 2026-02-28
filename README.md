@@ -63,13 +63,15 @@ chain_server:start().
 - Input: [5, 10, 15].
 - Output: (serv2) Integer list sum = 30
 
-## Unhandled Messages on serv3
+## Error Messages on serv3
  
 - Input: {error, "test error"}.
 - Output: (serv3) Error caught: "test error"
 
 - Input: {error, "connection failed"}.
 - Output: (serv3) Error caught: "connection failed"
+- 
+### Unhandled Messages on serv3
 
 - Input: {unknown, msg}.
 - Output: (serv3) Not handled: {unknown,msg}
