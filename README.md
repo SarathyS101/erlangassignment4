@@ -31,7 +31,7 @@ chain_server:start().
 {add, 5, 3}.
 (serv1) Add: 5 + 3 = 8
 
->>>{sub, 20, 8}. 
+>>> sub, 20, 8}. 
 (serv1) Subtract: 20 - 8 = 12
 
 >>> {mult, 3, 4}.
