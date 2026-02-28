@@ -8,16 +8,16 @@ c(chain_server).
 chain_server:start().
 
 >>> {add, 10, 5}.
-output serv1: add 10 5 = 15
+serv1: add 10 5 = 15
 
 >>> [1, 2, 3].
-output serv2: sum of [1,2,3] = 6
+serv2: sum of [1,2,3] = 6
 
 >>> {error, "test error"}.
-output serv3: Error: "test error"
+ serv3: Error: "test error"
 
 >>> hello.
-output serv3: Not handled: hello
+serv3: Not handled: hello
 
 >>> halt.
 (serv1) halting
