@@ -42,11 +42,11 @@ Input: {mult, 3, 4}.
 Expected: (serv1) mult 3 4 = 12
 
  Division
-Input: {div, 20, 4}.
+Input: {'div', 20, 4}.
 Expected: (serv1) div 20 4 = 5.0
 
 Division by Zero
-Input: {div, 10, 0}.
+Input: {'div', 10, 0}.
 Expected: (serv1) div 10 0 = Error: Division by zero
 
 Negation
