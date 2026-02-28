@@ -24,7 +24,6 @@ chain_server:start().
 (serv2) halting
 (serv3) Unhandled message count: 1
 (serv3) halting
-ok
 ```
 
 ## Arithmetic Operations on serv1
