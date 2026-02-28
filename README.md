@@ -8,13 +8,13 @@ c(chain_server).
 chain_server:start().
 
 >>> {add, 10, 5}.
-(serv1) add 10 5 = 15
+(serv1) add 10 + 5 = 15
 
 >>> [1, 2, 3].
-(serv2) sum of [1,2,3] = 6
+(serv2) Integer list sum = 6
 
 >>> {error, "test error"}.
-(serv3) Error: "test error"
+(serv3) Error caught: "test error"
 
 >>> hello.
 (serv3) Not handled: hello
@@ -22,8 +22,8 @@ chain_server:start().
 >>> halt.
 (serv1) halting
 (serv2) halting
-(serv3) Unhandled message count: 1
 (serv3) halting
+(serv3) Unhandled message count: 1
 ```
 
 ## Arithmetic Operations on serv1
