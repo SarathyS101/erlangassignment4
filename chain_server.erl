@@ -1,196 +1,127 @@
--module(chain_server).
--export([start/0, parse_input/1]).
+% Team Members: [Sarathy Selvam PID 730770538, Lakshin Ganesha PID 730757493, Sushant Potu PID 730768373]
+% Assignment 4 Erlang
+
+-module(server_chain).
+-export([start/0]).
 
 start() ->
-    % Starts the servers in reverse order
-    Serv3Pid = spawn(fun() -> serv3_loop(none, 0) end),
-    Serv2Pid = spawn(fun() -> serv2_loop(Serv3Pid) end),
-    Serv1Pid = spawn(fun() -> serv1_loop(Serv2Pid) end),
+   % Spawn the servers in reverse order
+   Serv3 = spawn(fun() -> serv3(0) end),
+   Serv2 = spawn(fun() -> serv2(Serv3) end),
+   Serv1 = spawn(fun() -> serv1(Serv2) end),
+  
+   io:format("Servers started, enter Erlang terms ending with a period.~n"),
+   io:format("Example: {add, 5, 3}. or all_done.~n"),
+   input_loop(Serv1).
 
-    % input reading loop
-    read_loop(Serv1Pid).
 
-% Read user input and send to serv1
-read_loop(Serv1Pid) ->
-    Input = io:get_line(">>> "),
-    case Input of
-        eof ->
-            ok;
-        Line ->
-            case parse_input(Line) of
-                {ok, all_done} ->
-                    Serv1Pid ! halt,
-                    ok;
-                {ok, Term} ->
-                    Serv1Pid ! Term,
-                    read_loop(Serv1Pid);
-                {error, ErrorMsg} ->
-                    io:format("Error: ~s~n", [ErrorMsg]),
-                    read_loop(Serv1Pid)
-            end
-    end.
+% Read user input and pass it to Server 1
+input_loop(Serv1Pid) ->
+   Input = io:read(">>> "),
+   case Input of
+       {ok, all_done} ->
+           Serv1Pid ! halt,
+           io:format("Main loop ending.~n");
+       {ok, Message} ->
+           Serv1Pid ! Message,
+           input_loop(Serv1Pid);
+       _Other ->
+           io:format("Error: Make sure to type a valid term and end with a period!~n"),
+           input_loop(Serv1Pid)
+   end.
 
-% Convert user input into Erlang 
-parse_input(Input) ->
-    CleanInput = string:trim(Input),
-    InputWithDot = case CleanInput of
-        "" -> "";
-        _ ->
-            case lists:last(CleanInput) of
-                $. -> CleanInput;
-                _ -> CleanInput ++ "."
-            end
-    end,
 
-    case InputWithDot of
-        "" -> {error, "Empty input"};
-        _ ->
-            % Replace reserved keywords with quoted versions
-            QuotedInput = quote_reserved_keywords(InputWithDot),
-            case erl_scan:string(QuotedInput) of
-                {ok, Tokens, _} ->
-                    case erl_parse:parse_term(Tokens) of
-                        {ok, Term} -> {ok, Term};
-                        {error, _} -> {error, "Parse error"}
-                    end;
-                {error, _} -> {error, "Scan error"}
-            end
-    end.
+%serv 1: Arithmetic Operations
+serv1(NextPid) ->
+   receive
+       halt ->
+           NextPid ! halt,
+           io:format("(serv1) Halting.~n");
+          
+       {add, N1, N2} when is_number(N1), is_number(N2) ->
+           io:format("(serv1) Add: ~p + ~p = ~p~n", [N1, N2, N1 + N2]),
+           serv1(NextPid);
+          
+       {sub, N1, N2} when is_number(N1), is_number(N2) ->
+           io:format("(serv1) Subtract: ~p - ~p = ~p~n", [N1, N2, N1 - N2]),
+           serv1(NextPid);
+          
+       {mult, N1, N2} when is_number(N1), is_number(N2) ->
+           io:format("(serv1) Multiply: ~p * ~p = ~p~n", [N1, N2, N1 * N2]),
+           serv1(NextPid);
+          
+       {'div', _, 0} ->
+           io:format("(serv1) Error: Division by zero~n"),
+           serv1(NextPid);
+          
+       {'div', N1, N2} when is_number(N1), is_number(N2) ->
+           io:format("(serv1) Divide: ~p / ~p = ~p~n", [N1, N2, N1 / N2]),
+           serv1(NextPid);
+          
+       {neg, N} when is_number(N) ->
+           io:format("(serv1) Negate: ~p = ~p~n", [N, -N]),
+           serv1(NextPid);
+          
+       {sqrt, N} when is_number(N), N >= 0 ->
+           io:format("(serv1) Sqrt ~p = ~p~n", [N, math:sqrt(N)]),
+           serv1(NextPid);
+          
+       {sqrt, _N} ->
+           io:format("(serv1) Error: Can’t calculate sqrt of a negative number~n"),
+           serv1(NextPid);
+          
+       OtherMessage ->
+           NextPid ! OtherMessage,
+           serv1(NextPid)
+   end.
 
-% Quote reserved Erlang keywords so they can be used as atoms
-quote_reserved_keywords(Input) ->
-    ReservedWords = ['div', 'rem', 'mod', 'band', 'bor', 'bxor', 'bsl', 'bsr', 'and', 'or', 'not'],
-    quote_keywords_list(Input, ReservedWords).
 
-% Recursively quotes keywords
-quote_keywords_list(Input, []) ->
-    Input;
-quote_keywords_list(Input, [Keyword|Rest]) ->
-    KeywordStr = atom_to_list(Keyword),
-    QuotedStr = "'" ++ KeywordStr ++ "'",
-    QuotedInput = replace_keyword_simple(Input, KeywordStr, QuotedStr),
-    quote_keywords_list(QuotedInput, Rest).
+%serv 2: List processing
+serv2(NextPid) ->
+   receive
+       halt ->
+           NextPid ! halt,
+           io:format("(serv2) Halting.~n");
+          
+       [Head | _Tail] = List when is_integer(Head) ->
+           Sum = sum_list(List),
+           io:format("(serv2) Sum of int list = ~p~n", [Sum]),
+           serv2(NextPid);
+          
+       [Head | _Tail] = List when is_float(Head) ->
+           Product = multiply_list(List),
+           io:format("(serv2) Product of Float list = ~p~n", [Product]),
+           serv2(NextPid);
+          
+       OtherMessage ->
+           NextPid ! OtherMessage,
+           serv2(NextPid)
+   end.
 
-% Replaces keyword when surrounded by non alphanumeric characters
-replace_keyword_simple(Input, Keyword, Quoted) ->
-    case string:find(Input, Keyword) of
-        nomatch ->
-            Input;
-        _ ->
-            do_replace_keyword(Input, Keyword, Quoted, [])
-    end.
 
-% Character by character replacement
-do_replace_keyword([], _, _, Acc) ->
-    lists:reverse(Acc);
-do_replace_keyword(Input, Keyword, Quoted, Acc) ->
-    KeyLen = length(Keyword),
-    case Input of
-        [Char|Rest] when Char == ${; Char == $[; Char == $( ->
-            case Rest of
-                L when length(L) >= KeyLen ->
-                    case lists:prefix(Keyword, L) of
-                        true ->
-                            % Check if keyword is followed by non alphanumeric
-                            RestAfter = lists:nthtail(KeyLen, L),
-                            case RestAfter of
-                                [C|_] when (C >= $a andalso C =< $z) orelse
-                                          (C >= $A andalso C =< $Z) orelse
-                                          (C >= $0 andalso C =< $9) orelse
-                                          C == $_ ->
-                                    do_replace_keyword(Rest, Keyword, Quoted, [Char|Acc]);
-                                _ ->
-                                    % Replace the keyword
-                                    NewAcc = lists:reverse(Quoted) ++ [Char|Acc],
-                                    do_replace_keyword(RestAfter, Keyword, Quoted, NewAcc)
-                            end;
-                        false ->
-                            do_replace_keyword(Rest, Keyword, Quoted, [Char|Acc])
-                    end;
-                _ ->
-                    do_replace_keyword(Rest, Keyword, Quoted, [Char|Acc])
-            end;
-        _ ->
-            do_replace_keyword(tl(Input), Keyword, Quoted, [hd(Input)|Acc])
-    end.
+% helper to add numbers in a list
+sum_list([]) -> 0;
+sum_list([Head | Tail]) when is_number(Head) -> Head + sum_list(Tail);
+sum_list([_ | Tail]) -> sum_list(Tail).
 
-% Server 1: Arithmetic operations
-serv1_loop(Serv2Pid) ->
-    receive
-        % Binary operations
-        {add, N1, N2} ->
-            Result = N1 + N2,
-            io:format("(serv1) add ~w ~w = ~w~n", [N1, N2, Result]),
-            serv1_loop(Serv2Pid);
-        {sub, N1, N2} ->
-            Result = N1 - N2,
-            io:format("(serv1) sub ~w ~w = ~w~n", [N1, N2, Result]),
-            serv1_loop(Serv2Pid);
-        {mult, N1, N2} ->
-            Result = N1 * N2,
-            io:format("(serv1) mult ~w ~w = ~w~n", [N1, N2, Result]),
-            serv1_loop(Serv2Pid);
-        {'div', N1, 0} ->
-            io:format("(serv1) div ~w 0 = Error: Division by zero~n", [N1]),
-            serv1_loop(Serv2Pid);
-        {'div', N1, N2} ->
-            Result = N1 / N2,
-            io:format("(serv1) div ~w ~w = ~w~n", [N1, N2, Result]),
-            serv1_loop(Serv2Pid);
-        % Unary operations
-        {neg, N} ->
-            Result = -N,
-            io:format("(serv1) neg ~w = ~w~n", [N, Result]),
-            serv1_loop(Serv2Pid);
-        {sqrt, N} when N < 0 ->
-            io:format("(serv1) sqrt ~w = Error: Negative square root~n", [N]),
-            serv1_loop(Serv2Pid);
-        {sqrt, N} ->
-            Result = math:sqrt(N),
-            io:format("(serv1) sqrt ~w = ~w~n", [N, Result]),
-            serv1_loop(Serv2Pid);
-        halt ->
-            io:format("(serv1) halting~n"),
-            Serv2Pid ! halt;
-        Msg ->
-            Serv2Pid ! Msg,
-            serv1_loop(Serv2Pid)
-    end.
 
-% Server 2: List processing
-serv2_loop(Serv3Pid) ->
-    receive
-        [H|_] = List when is_number(H) ->
-            case is_integer(H) of
-                true ->
-                    % Sum for integer head
-                    Result = lists:sum(List),
-                    io:format("(serv2) sum of ~w = ~w~n", [List, Result]),
-                    serv2_loop(Serv3Pid);
-                false ->
-                    % Product for float head
-                    Result = lists:foldl(fun(X, Acc) -> X * Acc end, 1, List),
-                    io:format("(serv2) product of ~w = ~w~n", [List, Result]),
-                    serv2_loop(Serv3Pid)
-            end;
-        halt ->
-            io:format("(serv2) halting~n"),
-            Serv3Pid ! halt;
-        Msg ->
-            Serv3Pid ! Msg,
-            serv2_loop(Serv3Pid)
-    end.
+% helper to multiply numbers in a list
+multiply_list([]) -> 1;
+multiply_list([Head | Tail]) when is_number(Head) -> Head * multiply_list(Tail);
+multiply_list([_ | Tail]) -> multiply_list(Tail).
 
-% Server 3: Error handling and unhandled message counter
-serv3_loop(_, Count) ->
-    receive
-        {error, Message} ->
-            io:format("(serv3) Error: ~w~n", [Message]),
-            serv3_loop(none, Count);
-        halt ->
-            io:format("(serv3) Unhandled message count: ~w~n", [Count]),
-            io:format("(serv3) halting~n");
-        Msg ->
-            io:format("(serv3) Not handled: ~w~n", [Msg]),
-            serv3_loop(none, Count + 1)
-    end.
+
+%serv 3: Error handling and counter
+serv3(Count) ->
+   receive
+       halt ->
+           io:format("(serv3) Halting. Total unhandled messages: ~p~n", [Count]);
+          
+       {error, Reason} ->
+           io:format("(serv3) Error caught: ~p~n", [Reason]),
+           serv3(Count);
+          
+       OtherMessage ->
+           io:format("(serv3) Not handled: ~p~n", [OtherMessage]),
+           serv3(Count + 1)
+   end.
